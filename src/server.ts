@@ -1,5 +1,5 @@
-function welcome(msg: string){
-console.log("welcome ",msg);
+function welcome(msg: string) {
+    console.log('welcome ', msg);
 }
 
-welcome("mohitttttttt")
+welcome('mohitttttttt');
