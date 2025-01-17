@@ -2,6 +2,7 @@ import createHttpError from 'http-errors';
 import { AppDataSource } from '../config/data-source';
 import { User } from '../entity/User';
 import { UserData } from '../types';
+import { Roles } from '../constants';
 
 export class UserService {
     async create({ firstName, lastName, email, password }: UserData) {
@@ -12,6 +13,7 @@ export class UserService {
                 lastName,
                 email,
                 password,
+                role: Roles.CUSTOMER,
             });
             return user;
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
