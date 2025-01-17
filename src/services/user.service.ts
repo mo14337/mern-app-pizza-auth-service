@@ -1,15 +1,26 @@
+import createHttpError from 'http-errors';
 import { AppDataSource } from '../config/data-source';
 import { User } from '../entity/User';
 import { UserData } from '../types';
 
 export class UserService {
     async create({ firstName, lastName, email, password }: UserData) {
-        const userRespository = AppDataSource.getRepository(User);
-        await userRespository.save({
-            firstName,
-            lastName,
-            email,
-            password,
-        });
+        try {
+            const userRespository = AppDataSource.getRepository(User);
+            const user = await userRespository.save({
+                firstName,
+                lastName,
+                email,
+                password,
+            });
+            return user;
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (err) {
+            const error = createHttpError(
+                500,
+                'Failed to store data in database.',
+            );
+            throw error;
+        }
     }
 }

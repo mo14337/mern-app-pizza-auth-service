@@ -1,6 +1,7 @@
 import { Request } from 'express';
 
 export interface UserData {
+    id?: number;
     firstName: string;
     lastName: string;
     email: string;
