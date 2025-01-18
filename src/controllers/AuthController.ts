@@ -2,7 +2,7 @@ import { NextFunction, Response } from 'express';
 import { ResgisterUserRequest } from '../types';
 import { UserService } from '../services/user.service';
 import { Logger } from 'winston';
-import createHttpError from 'http-errors';
+import { validationResult } from 'express-validator';
 
 export class AuthController {
     constructor(
@@ -14,13 +14,13 @@ export class AuthController {
         res: Response,
         next: NextFunction,
     ) {
+        //validation
+        const result = validationResult(req);
+        if (!result.isEmpty()) {
+            res.status(400).json({ errors: result.array() });
+        }
         const { firstName, lastName, email, password } = req.body;
 
-        if (!email) {
-            const error = createHttpError(400, 'Email is missing.');
-            next(error);
-            return;
-        }
         this.logger.debug('new request to register a user', {
             firstName,
             lastName,

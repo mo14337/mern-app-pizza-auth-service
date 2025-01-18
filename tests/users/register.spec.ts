@@ -179,8 +179,12 @@ describe('POST /auth/register', () => {
                 .post('/auth/register')
                 .send(userData);
 
+            const userRepository = connection.getRepository(User);
+            const users = await userRepository.find();
+
             // assert
             expect(response.statusCode).toBe(400);
+            expect(users).toHaveLength(0);
         });
     });
 });
