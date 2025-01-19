@@ -3,9 +3,11 @@ import { AuthController } from '../controllers/AuthController';
 import { UserService } from '../services/user.service';
 import logger from '../config/logger';
 import registerValidators from '../validators/register-validators';
+import { TokenService } from '../services/TokenService';
 const router = express.Router();
 const userService = new UserService();
-const authController = new AuthController(userService, logger);
+const tokenService = new TokenService();
+const authController = new AuthController(userService, logger, tokenService);
 
 router.post(
     '/register',
