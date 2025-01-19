@@ -5,6 +5,7 @@ import { AppDataSource } from '../../src/config/data-source';
 import { User } from '../../src/entity/User';
 import { Roles } from '../../src/constants';
 import bcrypt from 'bcrypt';
+import { isJwt } from './utils';
 
 describe('POST /auth/register', () => {
     let connection: DataSource;
@@ -162,6 +163,43 @@ describe('POST /auth/register', () => {
             expect(response.statusCode).toBe(400);
             expect(users).toHaveLength(1);
         });
+
+        it('should return the access token and refresh token', async () => {
+            //arrange
+            const userData = {
+                firstName: 'Mohit',
+                lastName: 'Singh',
+                email: 'mohit@gmail.com',
+                password: 'secret',
+            };
+            let accessToken = null;
+            let refreshToken = null;
+
+            //act
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData);
+
+            interface Headers {
+                ['set-cookie']?: string[];
+            }
+
+            const cookies = (response.headers as Headers)['set-cookie'] || [];
+            cookies.forEach((cookie) => {
+                if (cookie.startsWith('accessToken=')) {
+                    accessToken = cookie.split(';')[0].split('=')[1];
+                }
+                if (cookie.startsWith('refreshToken=')) {
+                    refreshToken = cookie.split(';')[0].split('=')[1];
+                }
+            });
+
+            // assert
+            expect(accessToken).not.toBeNull();
+            expect(refreshToken).not.toBeNull();
+            expect(isJwt(accessToken)).toBeTruthy();
+            expect(isJwt(refreshToken)).toBeTruthy();
+        });
     });
 
     describe('Fields are missing', () => {
@@ -273,7 +311,7 @@ describe('POST /auth/register', () => {
             expect(user.email).toBe('mohit@gmail.com');
         });
 
-        it('should return 400 status code if password kength is lessa than 8 characters', async () => {
+        it('should return 400 status code if password length is less than 6 characters', async () => {
             //arrange
             const userData = {
                 firstName: 'Mohit',
