@@ -1,14 +1,16 @@
 import createHttpError from 'http-errors';
-import { AppDataSource } from '../config/data-source';
 import { User } from '../entity/User';
 import { UserData } from '../types';
 import { Roles } from '../constants';
 import bcrypt from 'bcrypt';
+import { Repository } from 'typeorm';
 
 export class UserService {
+    constructor(private userRespository: Repository<User>) {}
     async create({ firstName, lastName, email, password }: UserData) {
-        const userRespository = AppDataSource.getRepository(User);
-        const user = await userRespository.findOne({ where: { email: email } });
+        const user = await this.userRespository.findOne({
+            where: { email: email },
+        });
         if (user) {
             const error = createHttpError(400, 'Email is already exists.');
             throw error;
@@ -17,7 +19,7 @@ export class UserService {
         const saltRound = 10;
         const hashedPassword = await bcrypt.hash(password, saltRound);
         try {
-            const user = await userRespository.save({
+            const user = await this.userRespository.save({
                 firstName,
                 lastName,
                 email,
