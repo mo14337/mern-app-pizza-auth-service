@@ -16,12 +16,12 @@ describe('POST /auth/register', () => {
 
     beforeEach(async () => {
         // db truncate
-        await connection.dropDatabase();
-        await connection.synchronize();
+        await connection?.dropDatabase();
+        await connection?.synchronize();
     });
 
     afterAll(async () => {
-        await connection.destroy();
+        await connection?.destroy();
     });
 
     describe('Given all fields', () => {
