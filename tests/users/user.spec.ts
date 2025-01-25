@@ -10,7 +10,7 @@ describe('POST auth/login', () => {
     let connection: DataSource;
     let jwks: JWKSMock;
     beforeAll(async () => {
-        jwks = createJWKSMock('http://localhost:5501');
+        jwks = createJWKSMock('http://localhost:5002');
         connection = await AppDataSource.initialize();
     });
 

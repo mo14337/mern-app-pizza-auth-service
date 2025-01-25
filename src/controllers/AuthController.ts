@@ -155,4 +155,50 @@ export class AuthController {
         const user = await this.userService.findById(Number(req.auth.sub));
         res.status(200).json({ ...user, password: undefined });
     }
+
+    async refresh(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            const payload: JwtPayload = {
+                sub: String(req.auth.sub),
+                role: req.auth.role,
+            };
+
+            const user = await this.userService.findById(req.auth.sub);
+            if (!user) {
+                const error = createHttpError(400, 'Invalid Credentials!');
+                next(error);
+                return;
+            }
+
+            const accessToken = this.tokenService.generateAccessToken(payload);
+
+            //presist refresh token in db
+            const newRefreshToken =
+                await this.tokenService.persistRefreshToken(user);
+            // delete old refresh token
+            await this.tokenService.deleteRefreshToken(Number(req.auth.id));
+
+            const refreshToken = this.tokenService.generateRefreshToken({
+                ...payload,
+                id: newRefreshToken.id,
+            });
+
+            // send and save tokens in cookies
+            res.cookie('accessToken', accessToken, {
+                domain: 'localhost',
+                sameSite: 'strict',
+                maxAge: 1000 * 60 * 60, //1h
+                httpOnly: true,
+            });
+            res.cookie('refreshToken', refreshToken, {
+                domain: 'localhost',
+                sameSite: 'strict',
+                maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
+                httpOnly: true,
+            });
+            res.status(200).json();
+        } catch (error) {
+            next(error);
+        }
+    }
 }
