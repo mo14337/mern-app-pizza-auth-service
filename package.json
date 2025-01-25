@@ -4,7 +4,7 @@
     "description": "user management services ",
     "main": "index.js",
     "scripts": {
-        "test": "jest NODE_ENV=test --watch",
+        "test": "jest NODE_ENV=test --watch --runInBand",
         "dev": "NODE_ENV=dev nodemon src/server.ts",
         "format:fix": "prettier . --write",
         "format:check": "prettier . --check",
@@ -58,6 +58,7 @@
         "jwks-rsa": "^3.1.0",
         "pg": "^8.4.0",
         "reflect-metadata": "^0.1.13",
+        "rsa-pem-to-jwk": "^1.1.3",
         "typeorm": "0.3.20",
         "winston": "^3.17.0"
     }

@@ -64,5 +64,47 @@ describe('POST auth/login', () => {
                 .send();
             expect((response.body as Record<string, string>).id).toBe(user.id);
         });
+
+        it('Should not return the password field', async () => {
+            const userRepository = connection.getRepository(User);
+
+            // Create and save user in the database
+            const user = await userRepository.save({
+                firstName: 'Mohit',
+                lastName: 'Singh',
+                email: 'mohit@gmail.com',
+                password: 'password',
+                role: Roles.CUSTOMER,
+            });
+
+            const accessToken = jwks.token({
+                sub: String(user.id),
+                role: user.role,
+            });
+
+            const response = await request(app)
+                .get('/auth/self')
+                .set('Cookie', [`accessToken=${accessToken}`])
+                .send();
+            expect(
+                (response.body as Record<string, string>).id,
+            ).not.toHaveProperty('password');
+        });
+
+        it('Should return 401 if no token is sent', async () => {
+            const userRepository = connection.getRepository(User);
+
+            // Create and save user in the database
+            await userRepository.save({
+                firstName: 'Mohit',
+                lastName: 'Singh',
+                email: 'mohit@gmail.com',
+                password: 'password',
+                role: Roles.CUSTOMER,
+            });
+
+            const response = await request(app).get('/auth/self').send();
+            expect(response.statusCode).toBe(401);
+        });
     });
 });
