@@ -1,10 +1,22 @@
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Response } from 'express';
 import { TenantController } from '../controllers/TenantController';
+import { TenantServices } from '../services/tenant.service';
+import tenantValidator from '../validators/tenant-validator';
+import { RegisterTenantRequest } from '../types';
+import { AppDataSource } from '../config/data-source';
+import { Tenant } from '../entity/Tenants';
+import logger from '../config/logger';
 const router = express.Router();
 
-const tenantController = new TenantController();
-router
-    .route('/')
-    .post((req: Request, res: Response) => tenantController.create(req, res));
+const tenantRepository = AppDataSource.getRepository(Tenant);
+const tenantService = new TenantServices(tenantRepository);
+const tenantController = new TenantController(tenantService, logger);
+
+router.post(
+    '/',
+    tenantValidator,
+    (req: RegisterTenantRequest, res: Response, next: NextFunction) =>
+        tenantController.create(req, res, next),
+);
 
 export default router;
