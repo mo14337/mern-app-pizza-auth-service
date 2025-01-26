@@ -12,7 +12,11 @@
         "lint:check": "eslint .",
         "lint:fix": "eslint . --fix",
         "start": "ts-node src/index.ts",
-        "typeorm": "typeorm-ts-node-commonjs"
+        "typeorm": "typeorm-ts-node-commonjs",
+        "migration:generate":"typeorm-ts-node-commonjs migration:generate",
+        "migration:run":"typeorm-ts-node-commonjs migration:run",
+        "migration:create":"typeorm-ts-node-commonjs migration:create"
+
     },
     "author": "mohit s <mohitsingh14336@gmail.com>",
     "license": "ISC",

@@ -9,9 +9,10 @@ import { AppDataSource } from '../config/data-source';
 import { RefreshToken } from '../entity/RefreshToken';
 import { User } from '../entity/User';
 import { CredentialsServices } from '../services/CredentialService';
-import auuthenticate from '../middlewares/authenticate';
+import authenticate from '../middlewares/authenticate';
 import { AuthRequest } from '../types';
 import validateRefreshToken from '../middlewares/validateRefreshToken';
+import parseRefreshToken from '../middlewares/parseRefreshToken';
 const router = express.Router();
 
 //db repositores
@@ -44,7 +45,7 @@ router.post(
 );
 router.get(
     '/self',
-    auuthenticate,
+    authenticate,
     loginValidators,
     (req: Request, res: Response) =>
         authController.self(req as AuthRequest, res),
@@ -55,6 +56,13 @@ router.post(
     validateRefreshToken,
     (req: Request, res: Response, next: NextFunction) =>
         authController.refresh(req as AuthRequest, res, next),
+);
+
+router.post(
+    '/logout',
+    parseRefreshToken,
+    (req: Request, res: Response, next: NextFunction) =>
+        authController.logout(req as AuthRequest, res, next),
 );
 
 export default router;

@@ -201,4 +201,22 @@ export class AuthController {
             next(error);
         }
     }
+
+    async logout(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            await this.tokenService.deleteRefreshToken(Number(req.auth.id));
+            this.logger.info('refersh token has been deleted', {
+                token: req.auth.id,
+            });
+            this.logger.info('User has been logged out', {
+                userId: req.auth.sub,
+            });
+            res.clearCookie('refreshToken');
+            res.clearCookie('accessToken');
+            res.json({});
+        } catch (error) {
+            next(error);
+        }
+        // delete old refresh token
+    }
 }
