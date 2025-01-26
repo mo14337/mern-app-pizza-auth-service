@@ -3,6 +3,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import logger from './config/logger';
 import { HttpError } from 'http-errors';
 import AuthRouter from './routes/auth';
+import TenantRouter from './routes/tenants';
 import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/auth', AuthRouter);
+app.use('/tenants', TenantRouter);
 
 //global error handler.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
