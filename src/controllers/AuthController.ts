@@ -7,6 +7,7 @@ import { TokenService } from '../services/TokenService';
 import { AuthRequest, RegisterUserRequest } from '../types';
 import createHttpError from 'http-errors';
 import { CredentialsServices } from '../services/CredentialService';
+import { Roles } from '../constants';
 
 export class AuthController {
     constructor(
@@ -41,6 +42,7 @@ export class AuthController {
                 lastName,
                 email,
                 password,
+                role: Roles.CUSTOMER,
             });
 
             this.logger.info('user has been registred', { id: user.id });

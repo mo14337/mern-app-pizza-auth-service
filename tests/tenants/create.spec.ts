@@ -117,6 +117,7 @@ describe('POST /tenants', () => {
     //sad path
     describe('Fields are missing', () => {
         it.skip('should return 400 if fields are missing', async () => {
+            const accessToken = jwks.token({ sub: '1', role: Roles.ADMIN });
             //arrange
             const tenantData = {
                 name: 'Tenant name',
@@ -124,6 +125,7 @@ describe('POST /tenants', () => {
             //act
             const response = await request(app)
                 .post('/tenants')
+                .set('Cookie', [`accessToken=${accessToken}`])
                 .send(tenantData);
             //assert
 

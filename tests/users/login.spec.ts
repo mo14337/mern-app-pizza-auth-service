@@ -5,7 +5,7 @@ import request from 'supertest';
 import { User } from '../../src/entity/User';
 import bcrypt from 'bcrypt';
 import { Roles } from '../../src/constants';
-import { isJwt } from './utils';
+import { isJwt } from '../../src/utils';
 
 describe('POST auth/login', () => {
     let connection: DataSource;
