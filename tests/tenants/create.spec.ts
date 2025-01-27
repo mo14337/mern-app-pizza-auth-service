@@ -90,6 +90,28 @@ describe('POST /tenants', () => {
             expect(tenants).toHaveLength(0);
             expect(response.statusCode).toBe(401);
         });
+
+        it('should return 403 if user is not admin', async () => {
+            const accessToken = jwks.token({ sub: '1', role: Roles.MANAGER });
+            //arrange
+            const tenantData = {
+                name: 'Tenant name',
+                address: 'Tenant address',
+            };
+            //act
+            const response = await request(app)
+                .post('/tenants')
+                .set('Cookie', [`accessToken=${accessToken}`])
+                .send(tenantData);
+
+            const tenantRepository = connection.getRepository(Tenant);
+            const tenants = await tenantRepository.find();
+
+            //assert
+
+            expect(tenants).toHaveLength(0);
+            expect(response.statusCode).toBe(403);
+        });
     });
 
     //sad path
