@@ -1,7 +1,7 @@
 import express, { NextFunction, Response } from 'express';
 import { TenantController } from '../controllers/TenantController';
 import { TenantServices } from '../services/tenant.service';
-import tenantValidator from '../validators/tenant-validator';
+import authenticate from '../middlewares/authenticate';
 import { RegisterTenantRequest } from '../types';
 import { AppDataSource } from '../config/data-source';
 import { Tenant } from '../entity/Tenants';
@@ -14,7 +14,7 @@ const tenantController = new TenantController(tenantService, logger);
 
 router.post(
     '/',
-    tenantValidator,
+    authenticate,
     (req: RegisterTenantRequest, res: Response, next: NextFunction) =>
         tenantController.create(req, res, next),
 );
