@@ -49,8 +49,8 @@ describe('POST auth/login', () => {
             const response = await request(app)
                 .post('/auth/login')
                 .send(userData);
-            let accessToken = null;
-            let refreshToken = null;
+            let accessToken: string | null = null;
+            let refreshToken: string | null = null;
 
             interface Headers {
                 ['set-cookie']?: string[];

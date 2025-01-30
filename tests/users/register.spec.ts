@@ -173,8 +173,8 @@ describe('POST /auth/register', () => {
                 email: 'mohit@gmail.com',
                 password: 'secret',
             };
-            let accessToken = null;
-            let refreshToken = null;
+            let accessToken: string | null = null;
+            let refreshToken: string | null = null;
 
             //act
             const response = await request(app)
