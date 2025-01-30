@@ -116,7 +116,7 @@ describe('POST /tenants', () => {
 
     //sad path
     describe('Fields are missing', () => {
-        it.skip('should return 400 if fields are missing', async () => {
+        it('should return 400 if fields are missing', async () => {
             const accessToken = jwks.token({ sub: '1', role: Roles.ADMIN });
             //arrange
             const tenantData = {

@@ -133,7 +133,7 @@ describe('POST /auth/register', () => {
             //act
             await request(app).post('/auth/register').send(userData);
             const userRepository = connection.getRepository(User);
-            const users = await userRepository.find();
+            const users = await userRepository.find({ select: ['password'] });
             const isMatch = await bcrypt.compare(
                 userData.password,
                 users[0].password,

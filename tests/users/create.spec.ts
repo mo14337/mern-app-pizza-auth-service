@@ -5,6 +5,8 @@ import request from 'supertest';
 import createJWKSMock, { JWKSMock } from 'mock-jwks';
 import { Roles } from '../../src/constants';
 import { User } from '../../src/entity/User';
+import { createTenant } from '../../src/utils';
+import { Tenant } from '../../src/entity/Tenants';
 
 describe('POST /users', () => {
     let connection: DataSource;
@@ -31,26 +33,8 @@ describe('POST /users', () => {
     //happy path
 
     describe('Given all fields', () => {
-        it.skip('It should return 201 status code', async () => {
-            const accessToken = jwks.token({ sub: '1', role: Roles.ADMIN });
-
-            // Create and save user in the database
-            const userData = {
-                firstName: 'Mohit',
-                lastName: 'Singh',
-                email: 'mohit@gmail.com',
-                password: 'password',
-                tenantId: 1,
-            };
-
-            const response = await request(app)
-                .post('/users')
-                .set('Cookie', [`accessToken=${accessToken}`])
-                .send(userData);
-
-            expect(response.statusCode).toBe(201);
-        });
         it('should create user in database', async () => {
+            const tenant = await createTenant(connection.getRepository(Tenant));
             const accessToken = jwks.token({ sub: '1', role: Roles.ADMIN });
             const userRepository = connection.getRepository(User);
 
@@ -60,7 +44,8 @@ describe('POST /users', () => {
                 lastName: 'Singh',
                 email: 'mohit@gmail.com',
                 password: 'password',
-                tenantId: 1,
+                tenantId: tenant.id,
+                role: Roles.MANAGER,
             };
 
             await request(app)
@@ -74,8 +59,9 @@ describe('POST /users', () => {
         });
 
         it('should create user with manager in database', async () => {
+            const tenant = await createTenant(connection.getRepository(Tenant));
+
             const accessToken = jwks.token({ sub: '1', role: Roles.ADMIN });
-            const userRepository = connection.getRepository(User);
 
             // Create and save user in the database
             const userData = {
@@ -83,9 +69,11 @@ describe('POST /users', () => {
                 lastName: 'Singh',
                 email: 'mohit@gmail.com',
                 password: 'password',
-                tenantId: 1,
+                tenantId: tenant.id,
+                role: Roles.MANAGER,
             };
 
+            const userRepository = connection.getRepository(User);
             await request(app)
                 .post('/users')
                 .set('Cookie', [`accessToken=${accessToken}`])
@@ -98,19 +86,4 @@ describe('POST /users', () => {
     });
 
     //sad path
-    describe('Fields are missing', () => {
-        it.skip('should return 400 if fields are missing', async () => {
-            //arrange
-            const tenantData = {
-                name: 'Tenant name',
-            };
-            //act
-            const response = await request(app)
-                .post('/tenants')
-                .send(tenantData);
-            //assert
-
-            expect(response.statusCode).toBe(400);
-        });
-    });
 });

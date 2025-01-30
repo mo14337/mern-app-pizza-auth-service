@@ -1,50 +1,99 @@
 import createHttpError from 'http-errors';
 import { User } from '../entity/User';
-import { UserData } from '../types';
+import { LimitedUserData, UserData } from '../types';
 import bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 
 export class UserService {
-    constructor(private userRespository: Repository<User>) {}
-    async create({ firstName, lastName, email, password, role }: UserData) {
-        const user = await this.userRespository.findOne({
+    constructor(private userRepository: Repository<User>) {}
+
+    async create({
+        firstName,
+        lastName,
+        email,
+        password,
+        role,
+        tenantId,
+    }: UserData) {
+        const user = await this.userRepository.findOne({
             where: { email: email },
         });
         if (user) {
-            const error = createHttpError(400, 'Email is already exists.');
-            throw error;
+            const err = createHttpError(400, 'Email is already exists!');
+            throw err;
         }
-        // hashed password
-        const saltRound = 10;
-        const hashedPassword = await bcrypt.hash(password, saltRound);
+        // Hash the password
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
         try {
-            const user = await this.userRespository.save({
+            return await this.userRepository.save({
                 firstName,
                 lastName,
                 email,
                 password: hashedPassword,
                 role,
+                tenant: tenantId ? { id: tenantId } : undefined,
             });
-            return user;
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+             
         } catch (err) {
+            console.log(err);
             const error = createHttpError(
                 500,
-                'Failed to store data in database.',
+                'Failed to store the data in the database',
             );
             throw error;
         }
     }
 
-    async findByEmail(email: string) {
-        return await this.userRespository.findOne({
-            where: { email: email },
+    async findByEmailWithPassword(email: string) {
+        return await this.userRepository.findOne({
+            where: {
+                email,
+            },
+            select: [
+                'id',
+                'firstName',
+                'lastName',
+                'email',
+                'role',
+                'password',
+            ],
         });
     }
 
     async findById(id: number) {
-        return await this.userRespository.findOne({
-            where: { id: id },
+        return await this.userRepository.findOne({
+            where: {
+                id,
+            },
         });
+    }
+
+    async update(
+        userId: number,
+        { firstName, lastName, role }: LimitedUserData,
+    ) {
+        try {
+            return await this.userRepository.update(userId, {
+                firstName,
+                lastName,
+                role,
+            });
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (err) {
+            const error = createHttpError(
+                500,
+                'Failed to update the user in the database',
+            );
+            throw error;
+        }
+    }
+
+    async getAll() {
+        return await this.userRepository.find();
+    }
+
+    async deleteById(userId: number) {
+        return await this.userRepository.delete(userId);
     }
 }
