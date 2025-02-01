@@ -34,7 +34,6 @@ export class UserService {
                 role,
                 tenant: tenantId ? { id: tenantId } : undefined,
             });
-             
         } catch (err) {
             console.log(err);
             const error = createHttpError(
