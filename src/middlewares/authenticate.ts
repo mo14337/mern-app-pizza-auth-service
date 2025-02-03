@@ -12,15 +12,15 @@ const jwtMiddleware = expressjwt({
     }) as unknown as GetVerificationKey,
     algorithms: ['RS256'],
     getToken(req: Request) {
-        const authHeader = req.headers.authorization;
-        if (authHeader && authHeader.split(' ')[1] !== undefined) {
-            const token = authHeader.split(' ')[1];
+        const authHeader = req?.headers?.authorization;
+        if (authHeader?.split(' ')[1] !== undefined) {
+            const token = authHeader?.split(' ')[1];
             if (token) {
                 return token;
             }
         }
 
-        const { accessToken } = req.cookies as Record<string, string>;
+        const { accessToken } = req?.cookies as Record<string, string>;
         return accessToken;
     },
 });
