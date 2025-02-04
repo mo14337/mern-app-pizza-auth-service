@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { AppDataSource } from '../../src/config/data-source';
 import app from '../../src/app';
 import request from 'supertest';
@@ -7,6 +7,7 @@ import { Roles } from '../../src/constants';
 import { User } from '../../src/entity/User';
 import { createTenant } from '../../src/utils';
 import { Tenant } from '../../src/entity/Tenants';
+import { UserData } from '../../src/types';
 
 describe('POST /users', () => {
     let connection: DataSource;
