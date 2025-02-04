@@ -1,7 +1,7 @@
 import createHttpError from 'http-errors';
 import { User } from '../entity/User';
 import { LimitedUserData, UserData } from '../types';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { Repository } from 'typeorm';
 
 export class UserService {
