@@ -13,7 +13,4 @@ export const AppDataSource = new DataSource({
     entities: ['src/entity/*.{ts,js}'],
     migrations: ['src/migration/*.{ts,js}'],
     subscribers: [],
-    ssl: {
-        rejectUnauthorized: false, // This will bypass certificate validation (usually fine for CI environments)
-    },
 });
