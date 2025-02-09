@@ -7,7 +7,6 @@ import { TokenService } from '../services/TokenService';
 import { AuthRequest, RegisterUserRequest } from '../types';
 import createHttpError from 'http-errors';
 import { CredentialsServices } from '../services/CredentialService';
-import { Roles } from '../constants';
 
 export class AuthController {
     constructor(
@@ -28,7 +27,7 @@ export class AuthController {
             res.status(400).json({ errors: result.array() });
             return;
         }
-        const { firstName, lastName, email, password } = req.body;
+        const { firstName, lastName, email, password, role } = req.body;
 
         this.logger.debug('new request to register a user', {
             firstName,
@@ -42,7 +41,7 @@ export class AuthController {
                 lastName,
                 email,
                 password,
-                role: Roles.CUSTOMER,
+                role,
             });
 
             this.logger.info('user has been registred', { id: user.id });
@@ -134,7 +133,7 @@ export class AuthController {
             res.cookie('accessToken', accessToken, {
                 domain: 'localhost',
                 sameSite: 'strict',
-                maxAge: 1000 * 60 * 60, //1h
+                maxAge: 1000 * 60, //1m
                 httpOnly: true,
             });
             res.cookie('refreshToken', refreshToken, {
@@ -189,7 +188,7 @@ export class AuthController {
             res.cookie('accessToken', accessToken, {
                 domain: 'localhost',
                 sameSite: 'strict',
-                maxAge: 1000 * 60 * 60, //1h
+                maxAge: 1000 * 60, //1m
                 httpOnly: true,
             });
             res.cookie('refreshToken', refreshToken, {
