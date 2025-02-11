@@ -27,7 +27,7 @@ export class TenantController {
                 name,
                 address,
             });
-            this.logger.info('TEnant has been created ', { id: tenant.id });
+            this.logger.info('Tenant has been created ', { id: tenant.id });
             res.status(201).json(tenant);
         } catch (error) {
             next(error);
