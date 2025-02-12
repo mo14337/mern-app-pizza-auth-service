@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { ITenantData } from '../types';
+import { ITenantData, PaginationParams } from '../types';
 import { Tenant } from '../entity/Tenants';
 import createHttpError from 'http-errors';
 
@@ -33,8 +33,14 @@ export class TenantServices {
         }
     }
 
-    async getAll() {
-        return await this.tenantRepository.find();
+    async getAll(validatedQuery: PaginationParams) {
+        const queryBuilder = this.tenantRepository.createQueryBuilder();
+        const result = queryBuilder
+            .skip((validatedQuery.currentPage - 1) * validatedQuery.perPage)
+            .take(validatedQuery.perPage)
+            .getManyAndCount();
+        // return await this.userRepository.find();
+        return result;
     }
 
     async getById(tenantId: number) {

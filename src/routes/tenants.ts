@@ -9,6 +9,8 @@ import logger from '../config/logger';
 import { canAccess } from '../middlewares/canAccess';
 import { Roles } from '../constants';
 import tenantValidator from '../validators/tenant-validator';
+import listUserValidator from '../validators/list-user-validator';
+import { Request } from 'express-jwt';
 const router = express.Router();
 
 const tenantRepository = AppDataSource.getRepository(Tenant);
@@ -32,7 +34,12 @@ router.patch(
     (req: RegisterTenantRequest, res: Response, next: NextFunction) =>
         tenantController.update(req, res, next),
 );
-router.get('/', (req, res, next) => tenantController.getAll(req, res, next));
+router.get(
+    '/',
+    listUserValidator,
+    (req: Request, res: Response, next: NextFunction) =>
+        tenantController.getAll(req, res, next),
+);
 router.get('/:id', authenticate, canAccess([Roles.ADMIN]), (req, res, next) =>
     tenantController.getOne(req, res, next),
 );
