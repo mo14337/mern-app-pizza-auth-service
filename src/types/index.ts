@@ -56,4 +56,6 @@ export interface UpdateUserRequest extends Request {
 export interface PaginationParams {
     perPage: number;
     currentPage: number;
+    q: string;
+    role: string;
 }

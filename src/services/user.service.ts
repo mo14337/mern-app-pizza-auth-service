@@ -2,7 +2,7 @@ import createHttpError from 'http-errors';
 import { User } from '../entity/User';
 import { LimitedUserData, PaginationParams, UserData } from '../types';
 import bcrypt from 'bcryptjs';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 
 export class UserService {
     constructor(private readonly userRepository: Repository<User>) {}
@@ -92,10 +92,27 @@ export class UserService {
     }
 
     async getAll(validatedQuery: PaginationParams) {
-        const queryBuilder = this.userRepository.createQueryBuilder();
-        const result = queryBuilder
+        const queryBuilder = this.userRepository.createQueryBuilder('user');
+        if (validatedQuery.q) {
+            const searchTerm = `%${validatedQuery.q}%`;
+            queryBuilder.where(
+                new Brackets((qb) => {
+                    qb.where(
+                        "CONCAT(user.firstName, ' ', user.lastName) ILIKE :q",
+                        { q: searchTerm },
+                    ).orWhere('user.email ILIKE :q', { q: searchTerm });
+                }),
+            );
+        }
+        if (validatedQuery.role) {
+            queryBuilder.andWhere('user.role = :role', {
+                role: validatedQuery.role,
+            });
+        }
+        const result = await queryBuilder
             .skip((validatedQuery.currentPage - 1) * validatedQuery.perPage)
             .take(validatedQuery.perPage)
+            .orderBy('user.id', 'DESC')
             .getManyAndCount();
         // return await this.userRepository.find();
         return result;

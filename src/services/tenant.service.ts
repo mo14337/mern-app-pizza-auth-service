@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { ITenantData, PaginationParams } from '../types';
 import { Tenant } from '../entity/Tenants';
 import createHttpError from 'http-errors';
@@ -34,10 +34,24 @@ export class TenantServices {
     }
 
     async getAll(validatedQuery: PaginationParams) {
-        const queryBuilder = this.tenantRepository.createQueryBuilder();
-        const result = queryBuilder
+        const queryBuilder = this.tenantRepository.createQueryBuilder('tenant');
+        if (validatedQuery.q) {
+            const searchTerm = `%${validatedQuery.q}%`;
+            queryBuilder.where(
+                new Brackets((qb) => {
+                    qb.where(
+                        "CONCAT(tenant.name, ' ', tenant.address) ILIKE :q",
+                        {
+                            q: searchTerm,
+                        },
+                    );
+                }),
+            );
+        }
+        const result = await queryBuilder
             .skip((validatedQuery.currentPage - 1) * validatedQuery.perPage)
             .take(validatedQuery.perPage)
+            .orderBy('tenant.id', 'DESC')
             .getManyAndCount();
         // return await this.userRepository.find();
         return result;
