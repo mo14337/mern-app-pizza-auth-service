@@ -73,13 +73,14 @@ export class UserService {
 
     async update(
         userId: number,
-        { firstName, lastName, role }: LimitedUserData,
+        { firstName, lastName, role, tenantId }: LimitedUserData,
     ) {
         try {
             return await this.userRepository.update(userId, {
                 firstName,
                 lastName,
                 role,
+                tenant: tenantId ? { id: tenantId } : null,
             });
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
