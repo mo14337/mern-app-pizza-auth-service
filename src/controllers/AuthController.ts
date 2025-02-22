@@ -7,6 +7,7 @@ import { TokenService } from '../services/TokenService';
 import { AuthRequest, RegisterUserRequest } from '../types';
 import createHttpError from 'http-errors';
 import { CredentialsServices } from '../services/CredentialService';
+import { Roles } from '../constants';
 
 export class AuthController {
     constructor(
@@ -118,6 +119,10 @@ export class AuthController {
                 role: user.role,
             };
 
+            if (user.role === Roles.MANAGER) {
+                payload.tenant = user.tenant?.id;
+            }
+
             const accessToken = this.tokenService.generateAccessToken(payload);
 
             //presist refresh token in db
@@ -170,7 +175,9 @@ export class AuthController {
                 next(error);
                 return;
             }
-
+            if (user.role === Roles.MANAGER) {
+                payload.tenant = user.tenant?.id;
+            }
             const accessToken = this.tokenService.generateAccessToken(payload);
 
             //presist refresh token in db
