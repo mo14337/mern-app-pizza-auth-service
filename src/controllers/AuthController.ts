@@ -50,6 +50,9 @@ export class AuthController {
             const payload: JwtPayload = {
                 sub: String(user.id),
                 role: user.role,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
             };
 
             const accessToken = this.tokenService.generateAccessToken(payload);
@@ -67,7 +70,7 @@ export class AuthController {
             res.cookie('accessToken', accessToken, {
                 domain: 'localhost',
                 sameSite: 'strict',
-                maxAge: 1000 * 60 * 60, //1h
+                maxAge: 1000 * 60, //1h
                 httpOnly: true,
             });
             res.cookie('refreshToken', refreshToken, {
@@ -117,6 +120,9 @@ export class AuthController {
             const payload: JwtPayload = {
                 sub: String(user.id),
                 role: user.role,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
             };
 
             if (user.role === Roles.MANAGER) {
@@ -167,6 +173,9 @@ export class AuthController {
             const payload: JwtPayload = {
                 sub: String(req.auth.sub),
                 role: req.auth.role,
+                fistName: req.auth.firstName,
+                lastName: req.auth.lastName,
+                email: req.auth.email,
             };
 
             const user = await this.userService.findById(req.auth.sub);
