@@ -7,10 +7,11 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { GlobalErrorHandler } from './middlewares/GlobalErrorHandler';
 
+const allowedOrigins = [process.env.CLIENT_URL, process.env.ADMIN_URL];
 const app = express();
 app.use(
     cors({
-        origin: ['http://localhost:5173'],
+        origin: allowedOrigins as string[],
         credentials: true,
     }),
 );
