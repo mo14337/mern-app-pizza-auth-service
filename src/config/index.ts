@@ -18,6 +18,7 @@ const {
     PRIVATE_KEY,
     ADMIN_URL,
     CLIENT_URL,
+    MAIN_DOMAIN,
 } = process.env;
 export const Config = {
     PORT,
@@ -32,4 +33,5 @@ export const Config = {
     PRIVATE_KEY,
     ADMIN_URL,
     CLIENT_URL,
+    MAIN_DOMAIN,
 };
