@@ -6,8 +6,9 @@ import UserRouter from './routes/user';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { GlobalErrorHandler } from './middlewares/GlobalErrorHandler';
+import { Config } from './config';
 
-const allowedOrigins = [process.env.CLIENT_URL, process.env.ADMIN_URL];
+const allowedOrigins = [Config.CLIENT_URL, Config.ADMIN_URL];
 const app = express();
 app.use(
     cors({
